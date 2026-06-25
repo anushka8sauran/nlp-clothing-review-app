@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}{{ store_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-5 hero-section">
+        <div class="col-12">
+            <div class="text-center text-dark">
+                <h1 class="display-4 fw-bold mb-3">Welcome to {{ store_name }}</h1>
+                <p class="lead mb-4">Discover the latest fashion trends with AI-powered recommendations</p>
+                <div class="search-container">
+                    <form method="GET" action="{{ url_for('handle_search_request') }}">
+                        <div class="input-group input-group-lg">
+                            <input type="text" class="form-control" name="keyword" placeholder="Search for jeans, dresses, coats..." style="border-radius: 25px 0 0 25px;">
+                            <button class="btn btn-primary" type="submit" style="border-radius: 0 25px 25px 0;">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5 statistics-cards">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-tshirt fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">{{ total_catalog_items }} Items</h5>
+                    <p class="card-text">Clothing Collection</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-robot fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">AI Powered</h5>
+                    <p class="card-text">Smart Recommendations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Quality</h5>
+                    <p class="card-text">Customer Reviews</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="text-center text-dark-theme mb-4 featured-items-section">Featured Items</h2>
+    
+    {% if items %}
+        <div class="row">
+            {% for item in items %}
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item['Clothes Title'] }}</h5>
+                        <p class="card-text text-muted small">{{ item['Clothes Description'][:100] }}{% if item['Clothes Description']|length > 100 %}...{% endif %}</p>
+                        <div class="mb-2">
+                            <span class="badge bg-primary">{{ item['Department Name'] }}</span>
+                            <span class="badge bg-secondary">{{ item['Class Name'] }}</span>
+                        </div>
+                        <div class="rating mb-2">
+                            {% for i in range(item['Rating']) %}
+                                <i class="fas fa-star"></i>
+                            {% endfor %}
+                            {% for i in range(5 - item['Rating']) %}
+                                <i class="far fa-star"></i>
+                            {% endfor %}
+                            <small class="text-muted">({{ item['Rating'] }}/5)</small>
+                        </div>
+                        <small class="text-muted">Age Group: {{ item['Age'] }}+</small>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ url_for('show_item_details', clothing_item_id=item['Clothing ID']) }}" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {# Display "View All Items" button if there are more items in total than currently displayed #}
+        {% if total_catalog_items > items|length %}
+        <div class="text-center mt-4">
+            <p class="text-dark-theme">Showing {{ items|length }} of {{ total_catalog_items }} items</p>
+            <a href="{{ url_for('handle_search_request') }}" class="btn btn-dark"> {# CHANGED: btn-outline-light to btn-dark #}
+                <i class="fas fa-th"></i> View All Items
+            </a>
+        </div>
+        {# This else block catches cases where 'items' is not empty but 'total_catalog_items' is not greater than 'items|length' #}
+        {% else %} 
+            {# No 'View All Items' button needed if all items are already displayed #}
+        {% endif %}
+
+    {% else %}
+        {# This else block handles the case where 'items' is completely empty (no featured items to show) #}
+        <div class="row">
+            <div class="col-12">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+                        <h3>No Items Available</h3>
+                        <p class="text-muted">The clothing catalog is currently empty or unavailable.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

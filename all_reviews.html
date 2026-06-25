@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}All Reviews - {{ store_name }}{% endblock %}
+
+{% block content %}
+<div class="container all-reviews-page"> {# Added all-reviews-page class #}
+    <div class="row mb-4 all-reviews-header"> {# Added all-reviews-header class #}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1 text-dark-theme"><i class="fas fa-comments"></i> All Customer Reviews</h2> {# Added text-dark-theme #}
+                            <p class="text-muted mb-0">
+                                {{ reviews|length }} review{% if reviews|length != 1 %}s{% endif %} from our customers
+                            </p>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('display_homepage') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if reviews %}
+        <div class="row mb-4 all-reviews-filter-sort"> {# Added all-reviews-filter-sort class #}
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <div class="btn-group" role="group" aria-label="Filter reviews">
+                                    <button type="button" class="btn btn-outline-primary active" data-filter="all">
+                                        All Reviews
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success" data-filter="recommended">
+                                        <i class="fas fa-thumbs-up"></i> Recommended
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" data-filter="not-recommended">
+                                        <i class="fas fa-thumbs-down"></i> Not Recommended
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="btn-group" role="group" aria-label="Sort reviews">
+                                    <button type="button" class="btn btn-outline-secondary active" data-sort="newest">
+                                        Newest First
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-sort="oldest">
+                                        Oldest First
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-sort="rating-high">
+                                        Highest Rated
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-sort="rating-low">
+                                        Lowest Rated
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="reviewsContainer">
+            {% for review in reviews %}
+            <div class="col-lg-6 mb-4 review-item all-reviews-review-item" 
+                 data-recommended="{{ review['recommended'] }}" 
+                 data-rating="{{ review['rating'] }}" 
+                 data-timestamp="{{ review['timestamp'] }}">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="card-title mb-1 text-dark-theme">{{ review['title'] }}</h5> {# Added text-dark-theme #}
+                                <small class="text-muted">
+                                    <a href="{{ url_for('show_item_details', clothing_item_id=review['clothing_id']) }}" class="text-decoration-none">
+                                        Item ID: {{ review['clothing_id'] }}
+                                    </a>
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <div class="rating mb-1">
+                                    {% for i in range(review['rating']) %}
+                                        <i class="fas fa-star text-warning"></i>
+                                    {% endfor %}
+                                    {% for i in range(5 - review['rating']) %}
+                                        <i class="far fa-star text-warning"></i>
+                                    {% endfor %}
+                                </div>
+                                <small class="text-muted">{{ review['timestamp'] }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-dark-theme">{{ review['review_text'] }}</p> {# Added text-dark-theme #}
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                {% if review['recommended'] == 1 %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-thumbs-up"></i> Recommended
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-thumbs-down"></i> Not Recommended
+                                    </span>
+                                {% endif %}
+                                <span class="badge bg-primary">{{ review['rating'] }}/5 Stars</span>
+                            </div>
+                            {% if review.get('predicted_recommendation') is not none %}
+                            <div class="text-end">
+                                <small class="text-muted">
+                                    AI Predicted: 
+                                    {% if review['predicted_recommendation'] == 1 %}
+                                        <span class="text-success">Recommended</span>
+                                    {% else %}
+                                        <span class="text-danger">Not Recommended</span>
+                                    {% endif %}
+                                    ({{ "%.0f"|format(review.get('confidence', 0) * 100) }}%)
+                                </small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="row mt-4 all-reviews-stats"> {# Added all-reviews-stats class #}
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0 text-dark-theme"><i class="fas fa-chart-bar"></i> Review Statistics</h5> {# Added text-dark-theme #}
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3">
+                                <div class="h2 text-dark-theme">{{ reviews|length }}</div> {# Added text-dark-theme #}
+                                <div class="text-muted">Total Reviews</div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="h2 text-success">
+                                    {{ reviews|selectattr("recommended", "equalto", 1)|list|length }}
+                                </div>
+                                <div class="text-muted">Recommended</div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="h2 text-warning">
+                                    {{ "%.1f"|format(reviews|sum(attribute="rating")/reviews|length) if reviews else "0" }}
+                                </div>
+                                <div class="text-muted">Average Rating</div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="h2 text-info">
+                                    {{ "%.0f"|format((reviews|selectattr("recommended", "equalto", 1)|list|length / reviews|length * 100)) if reviews else "0" }}%
+                                </div>
+                                <div class="text-muted">Recommendation Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card text-center">
+                    <div class="card-body py-5">
+                        <i class="fas fa-comments fa-4x text-muted mb-3"></i>
+                        <h3 class="text-muted mb-3">No Reviews Yet</h3>
+                        <p class="text-muted mb-4">Be the first to share your experience with our clothing items!</p>
+                        <a href="{{ url_for('display_homepage') }}" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag"></i> Browse Items
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const reviewItems = document.querySelectorAll('.review-item');
+    const filterButtons = document.querySelectorAll('[data-filter]');
+    const sortButtons = document.querySelectorAll('[data-sort]');
+    
+    // Filter functionality
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.dataset.filter;
+            
+            reviewItems.forEach(item => {
+                const recommended = item.dataset.recommended;
+                let show = true;
+                
+                if (filter === 'recommended' && recommended !== '1') {
+                    show = false;
+                } else if (filter === 'not-recommended' && recommended !== '0') {
+                    show = false;
+                }
+                
+                if (show) {
+                    item.style.display = 'block';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, 50);
+                } else {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        item.style.display = 'none';
+                    }, 300);
+                }
+            });
+        });
+    });
+    
+    // Sort functionality
+    sortButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            sortButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const sort = this.dataset.sort;
+            const container = document.getElementById('reviewsContainer');
+            const items = Array.from(reviewItems);
+            
+            items.sort((a, b) => {
+                switch(sort) {
+                    case 'newest':
+                        return new Date(b.dataset.timestamp) - new Date(a.dataset.timestamp);
+                    case 'oldest':
+                        return new Date(a.dataset.timestamp) - new Date(b.dataset.timestamp);
+                    case 'rating-high':
+                        return parseInt(b.dataset.rating) - parseInt(a.dataset.rating);
+                    case 'rating-low':
+                        return parseInt(a.dataset.rating) - parseInt(b.dataset.rating);
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Add fade out effect
+            items.forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(-20px)';
+            });
+            
+            // Reorder and fade in
+            setTimeout(() => {
+                items.forEach(item => {
+                    container.appendChild(item);
+                });
+                
+                setTimeout(() => {
+                    items.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, index * 50);
+                    });
+                }, 50);
+            }, 300);
+        });
+    });
+    
+    // Add transition styles
+    reviewItems.forEach(item => {
+        item.style.transition = 'all 0.3s ease';
+    });
+});
+</script>
+{% endblock %}

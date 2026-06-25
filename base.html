@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ChicShack{% endblock %}</title>
+    
+    {# Google Fonts - Poppins font, similar to the reference site #}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* General Body and Font Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f8f8; /* Light background for the main content area */
+            min-height: 100vh;
+            color: #333; /* Default text color */
+        }
+
+        /* Combined Header/Navigation Bar (Black background, white text for main nav) */
+        .main-header {
+            background-color: #000000; /* Black background for the main nav */
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+        .main-header .navbar-brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.0em;
+            color: #ffffff !important; /* White text for logo */
+            text-transform: lowercase;
+        }
+        .main-header .navbar-nav .nav-link {
+            color: #ffffff !important; /* White text for nav links */
+            font-weight: 500;
+            padding: 8px 15px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-size: 0.95em;
+        }
+        .main-header .navbar-nav .nav-link:hover,
+        .main-header .navbar-nav .nav-item.active .nav-link {
+            background-color: #333333; /* Darker grey on hover */
+            border-radius: 5px;
+        }
+        /* Navbar toggler for smaller screens */
+        .main-header .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        .main-header .navbar-toggler-icon {
+            filter: invert(1); /* Makes the icon white */
+        }
+
+        /* General Card styles */
+        .card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background-color: #ffffff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Primary Button styles (Black background) */
+        .btn-primary {
+            background: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #333333; /* Darker grey on hover */
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Outline Secondary Button styles (for 'Back to Home' etc.) */
+        .btn-outline-secondary {
+            border-color: #ccc;
+            color: #555;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        /* Outline Light Button styles (for 'View All Items') */
+        .btn-outline-light {
+            border-color: #ffffff;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .btn-outline-light:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        /* Footer styles (Dark background) */
+        .footer {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        /* Search container styles (for homepage hero search) */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .search-container .input-group .form-control {
+            border: 1px solid #ccc;
+            border-right: none;
+            border-radius: 25px 0 0 25px !important;
+            padding: 12px 20px;
+            font-size: 1.1em;
+        }
+        .search-container .input-group .btn-primary {
+            border-radius: 0 25px 25px 0 !important;
+            padding: 12px 25px;
+            font-size: 1.1em;
+        }
+        
+        /* Alert messages */
+        .alert {
+            border-radius: 8px;
+        }
+        
+        /* Rating stars color */
+        .rating {
+            color: #ffc107;
+        }
+        
+        /* Main content wrapper padding and min-height */
+        .content-wrapper {
+            min-height: calc(100vh - 220px);
+            padding: 40px 0;
+        }
+
+        /* Homepage Hero Section specific styles */
+        .hero-section h1 {
+            color: #000000 !important; /* Make Welcome to ChicShack text black */
+        }
+        .hero-section .lead {
+             color: #555 !important; /* Darker grey for lead text */
+        }
+        .hero-section .search-container .form-control {
+            background-color: #ffffff;
+            color: #333;
+        }
+        .hero-section .search-container .btn-primary {
+             background: #000000;
+             color: #ffffff;
+        }
+        .hero-section {
+            background-color: #e0e0e0; /* Light background for hero section */
+            padding: 60px 0;
+            margin-bottom: 50px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Statistics Cards adjustments */
+        .statistics-cards .card-title {
+            color: #000000;
+        }
+        .statistics-cards .card-text {
+            color: #555555;
+        }
+        .statistics-cards .text-primary, 
+        .statistics-cards .text-success, 
+        .statistics-cards .text-warning {
+            color: #333 !important; /* Make icons dark */
+        }
+
+        /* Featured Items Section adjustments */
+        .featured-items-section h2 {
+            color: #000000 !important;
+            margin-bottom: 30px;
+        }
+        .featured-items-section .card-title {
+            color: #000000;
+        }
+        .featured-items-section .card-text.small {
+            color: #666;
+        }
+        .featured-items-section .badge {
+            background-color: #e0e0e0;
+            color: #333;
+            border: 1px solid #d0d0d0;
+        }
+        .featured-items-section .text-muted {
+            color: #777 !important;
+        }
+        .featured-items-section .card-footer {
+            background-color: #f8f8f8;
+        }
+        .featured-items-section .btn-primary {
+            background-color: #000000;
+            color: #ffffff;
+        }
+        .featured-items-section .btn-primary:hover {
+            background-color: #333333;
+        }
+        .featured-items-section .text-white { /* Ensure text near "View All Items" button is dark */
+            color: #333 !important;
+        }
+
+        /* Item Detail Page Adjustments */
+        .breadcrumb .breadcrumb-item a, .breadcrumb .breadcrumb-item span {
+            color: #555 !important;
+        }
+        .breadcrumb .breadcrumb-item.active {
+            color: #000 !important;
+        }
+        .item-detail-card .card-title {
+            color: #000;
+        }
+        .item-detail-card .lead, .item-detail-card p {
+            color: #333;
+        }
+        .item-detail-card .badge {
+            background-color: #e0e0e0;
+            color: #333;
+            border: 1px solid #d0d0d0;
+        }
+        .item-detail-card .rating .fa-star {
+            color: #ffc107;
+        }
+        .item-detail-card .text-primary {
+            color: #000 !important;
+        }
+        .item-detail-card .text-muted {
+            color: #555 !important;
+        }
+
+        /* Reviews Section in Item Detail */
+        .reviews-section .card-header h4, .reviews-section .badge {
+            color: #000;
+            background-color: #e0e0e0;
+        }
+        .reviews-section .review-item h6 {
+            color: #000;
+        }
+        .reviews-section .review-item p {
+            color: #444;
+        }
+        .reviews-section .badge.bg-success {
+            background-color: #28a745 !important;
+            color: #ffffff;
+        }
+        .reviews-section .badge.bg-danger {
+            background-color: #dc3545 !important;
+            color: #ffffff;
+        }
+        .reviews-section .text-muted small {
+            color: #777 !important;
+        }
+        .reviews-section .btn-primary {
+            background-color: #000;
+            color: #fff;
+        }
+        .reviews-section .btn-primary:hover {
+            background-color: #333;
+        }
+
+        /* Search Results Page Adjustments */
+        .search-results-header .card-body h2 {
+            color: #000;
+        }
+        .search-results-header .card-body p {
+            color: #555;
+        }
+        .search-results-cards .card-title {
+            color: #000;
+        }
+        .search-results-cards .card-text.small {
+            color: #666;
+        }
+        .search-results-cards .badge {
+            background-color: #e0e0e0;
+            color: #333;
+            border: 1px solid #d0d0d0;
+        }
+        .search-results-cards .text-muted {
+            color: #777 !important;
+        }
+        .search-results-cards .btn-primary {
+            background-color: #000;
+            color: #fff;
+        }
+        .search-results-cards .btn-primary:hover {
+            background-color: #333;
+        }
+        .search-results-no-results .card-body h3 {
+            color: #000;
+        }
+        .search-results-no-results .card-body p {
+            color: #555;
+        }
+        .search-results-no-results .btn-outline-primary {
+            border-color: #ccc;
+            color: #555;
+        }
+        .search-results-no-results .btn-primary {
+            background-color: #000;
+            color: #fff;
+        }
+        .search-results-no-results .btn-primary:hover {
+            background-color: #333;
+        }
+        .search-tips .card {
+            background-color: #f0f0f0;
+            border-color: #e0e0e0;
+        }
+        .search-tips .card-title {
+            color: #000;
+        }
+        .search-tips ul {
+            color: #555;
+        }
+        .search-tips .text-warning {
+            color: #555 !important;
+        }
+
+        /* All Reviews Page Adjustments */
+        .all-reviews-header .card-body h2 {
+            color: #000;
+        }
+        .all-reviews-header .card-body p {
+            color: #555;
+        }
+        .all-reviews-filter-sort .btn-group .btn {
+            border-color: #ccc;
+            color: #555;
+            background-color: #f8f8f8;
+        }
+        .all-reviews-filter-sort .btn-group .btn.active {
+            background-color: #000;
+            color: #fff;
+            border-color: #000;
+        }
+        .all-reviews-filter-sort .btn-group .btn-outline-success {
+            border-color: #28a745;
+            color: #28a745;
+        }
+        .all-reviews-filter-sort .btn-group .btn-outline-success.active {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .all-reviews-filter-sort .btn-group .btn-outline-danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        .all-reviews-filter-sort .btn-group .btn-outline-danger.active {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .all-reviews-review-item .card-header h5 {
+            color: #000;
+        }
+        .all-reviews-review-item .card-body p {
+            color: #444;
+        }
+        .all-reviews-review-item .badge.bg-success {
+            background-color: #28a745 !important;
+            color: #fff;
+        }
+        .all-reviews-review-item .badge.bg-danger {
+            background-color: #dc3545 !important;
+            color: #fff;
+        }
+        .all-reviews-review-item .badge.bg-primary {
+            background-color: #e0e0e0;
+            color: #333;
+            border: 1px solid #d0d0d0;
+        }
+        .all-reviews-review-item .text-end small {
+            color: #777 !important;
+        }
+        .all-reviews-stats .h2 {
+            color: #000 !important;
+        }
+        .all-reviews-stats .text-primary, .all-reviews-stats .text-success, .all-reviews-stats .text-warning, .all-reviews-stats .text-info {
+            color: #000 !important;
+        }
+        .all-reviews-stats .text-muted {
+            color: #555 !important;
+        }
+
+        /* Create Review Page Adjustments (assuming it now extends base.html) */
+        /* These styles will override the generic ones if they are in base.html */
+        /* .create-review-section is for the main container on create review page */
+        .create-review-section h1 {
+            color: #000;
+        }
+        .create-review-section .item-info {
+            background-color: #f0f0f0;
+            border-left-color: #000;
+            color: #333;
+        }
+        .create-review-section .form-group label {
+            color: #333;
+        }
+        .create-review-section input[type="text"], 
+        .create-review-section textarea {
+            border-color: #ccc;
+            color: #333;
+        }
+        .create-review-section input[type="text"]:focus, 
+        .create-review-section textarea:focus {
+            border-color: #000;
+        }
+        .create-review-section .prediction-section {
+            background-color: #f0f8f8;
+            border-color: #a0d0d0;
+            color: #333;
+        }
+        .create-review-section .prediction-section h4 {
+            color: #000;
+        }
+        .create-review-section .prediction-result {
+            color: #333;
+        }
+        .create-review-section .confidence {
+            color: #666;
+        }
+        .create-review-section .override-section {
+            border-top-color: #e0e0e0;
+        }
+        .create-review-section .btn-primary {
+            background-color: #000;
+            color: #fff;
+        }
+        .create-review-section .btn-primary:hover {
+            background-color: #333;
+        }
+        .create-review-section .btn-secondary {
+            background-color: #666;
+            color: #fff;
+        }
+        .create-review-section .btn-secondary:hover {
+            background-color: #444;
+        }
+        .create-review-section .required {
+            color: #dc3545;
+        }
+
+        /* Utility classes for consistent styling */
+        .text-dark-theme {
+            color: #000000 !important;
+        }
+        .bg-light-theme {
+            background-color: #ffffff !important;
+        }
+        .border-light-theme {
+            border-color: #e0e0e0 !important;
+        }
+    </style>
+</head>
+<body>
+    {# Main Header/Navigation Bar (consolidated) #}
+    <header class="main-header">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-dark p-0">
+                <a class="navbar-brand" href="{{ url_for('display_homepage') }}">
+                    chicshack
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('display_homepage') }}">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('display_all_reviews') }}">
+                                <i class="fas fa-comments"></i> All Reviews
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="content-wrapper">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer text-center">
+        <div class="container">
+            <p>&copy; {{ current_year }} ChicShack. All rights reserved.</p>
+            <p>Total Items: {{ total_items }} | Powered by AI Recommendations</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

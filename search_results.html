@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - {{ store_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4 search-results-header"> {# Added search-results-header class #}
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1 text-dark-theme">Search Results</h2> {# Added text-dark-theme #}
+                            {% if keyword %}
+                                <p class="text-muted mb-0">
+                                    Showing {{ count }} result{% if count != 1 %}s{% endif %} for "<strong>{{ keyword }}</strong>"
+                                </p>
+                            {% else %}
+                                <p class="text-muted mb-0">Showing all {{ count }} items</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <a href="{{ url_for('display_homepage') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="search-container">
+                <form method="GET" action="{{ url_for('handle_search_request') }}">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="keyword" value="{{ keyword }}" placeholder="Search for jeans, dresses, coats..." style="border-radius: 25px 0 0 25px;">
+                        <button class="btn btn-primary" type="submit" style="border-radius: 0 25px 25px 0;">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if results %}
+        <div class="row search-results-cards"> {# Added search-results-cards class #}
+            {% for item in results %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark-theme">{{ item['Clothes Title'] }}</h5> {# Added text-dark-theme #}
+                        <p class="card-text text-muted small">{{ item['Clothes Description'][:120] }}{% if item['Clothes Description']|length > 120 %}...{% endif %}</p>
+                        <div class="mb-2">
+                            <span class="badge bg-primary">{{ item['Department Name'] }}</span>
+                            <span class="badge bg-secondary">{{ item['Class Name'] }}</span>
+                        </div>
+                        <div class="rating mb-2">
+                            {% for i in range(item['Rating']) %}
+                                <i class="fas fa-star"></i>
+                            {% endfor %}
+                            {% for i in range(5 - item['Rating']) %}
+                                <i class="far fa-star"></i>
+                            {% endfor %}
+                            <small class="text-muted">({{ item['Rating'] }}/5)</small>
+                        </div>
+                        <small class="text-muted">Age Group: {{ item['Age'] }}+ | ID: {{ item['Clothing ID'] }}</small>
+                        {% if item.get('search_relevance') %}
+                            <div class="mt-2">
+                                <small class="text-success">
+                                    <i class="fas fa-bullseye"></i> Relevance: {{ item['search_relevance'] }}
+                                </small>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ url_for('show_item_details', clothing_item_id=item['Clothing ID']) }}" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row search-results-no-results"> {# Added search-results-no-results class #}
+            <div class="col-12">
+                <div class="card text-center">
+                    <div class="card-body py-5">
+                        <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                        <h3 class="text-muted">No Results Found</h3>
+                        {% if keyword %}
+                            <p class="text-muted">No items match your search for "<strong>{{ keyword }}</strong>"</p>
+                            <p class="text-muted">Try searching for:</p>
+                            <div class="mt-3">
+                                <a href="{{ url_for('handle_search_request', keyword='dress') }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Dresses</a>
+                                <a href="{{ url_for('handle_search_request', keyword='jeans') }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Jeans</a>
+                                <a href="{{ url_for('handle_search_request', keyword='shirt') }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Shirts</a>
+                                <a href="{{ url_for('handle_search_request', keyword='coat') }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Coats</a>
+                                <a href="{{ url_for('handle_search_request', keyword='sweater') }}" class="btn btn-outline-primary btn-sm me-2 mb-2">Sweaters</a>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">The clothing catalog appears to be empty.</p>
+                        {% endif %}
+                        <div class="mt-4">
+                            <a href="{{ url_for('display_homepage') }}" class="btn btn-primary">
+                                <i class="fas fa-home"></i> Browse All Items
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if keyword and results %}
+    <div class="row mt-4 search-tips"> {# Added search-tips class #}
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6 class="card-title text-dark-theme"><i class="fas fa-lightbulb text-warning"></i> Search Tips</h6> {# Added text-dark-theme #}
+                    <ul class="mb-0 small text-dark-theme"> {# Added text-dark-theme #}
+                        <li>Try different keywords like "jeans" instead of "pants"</li>
+                        <li>Use singular or plural forms (e.g., "dress" or "dresses")</li>
+                        <li>Search by department names like "outerwear" or "tops"</li>
+                        <li>Leave the search empty to see all available items</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

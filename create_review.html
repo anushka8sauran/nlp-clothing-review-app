@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+
+{% block title %}Create Review - {{ store_name }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom styles specifically for this page, overriding/augmenting Bootstrap */
+    /* Adjustments to general container for this page specifically */
+    .create-review-section.container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        max-width: 800px; /* Limit width as per your original style */
+        margin-top: 30px; /* Add some top margin */
+        margin-bottom: 30px; /* Add some bottom margin */
+    }
+
+    /* Text colors for various elements on this page */
+    .create-review-section h1,
+    .create-review-section h3,
+    .create-review-section h4,
+    .create-review-section p,
+    .create-review-section strong,
+    .create-review-section label {
+        color: #333 !important; /* Ensure all main text is dark */
+    }
+
+    /* Item Info section */
+    .create-review-section .item-info {
+        background-color: #f8f9fa; /* Light background for item info */
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        border-left: 4px solid #000000; /* Black accent bar */
+    }
+    
+    /* Form inputs and textareas */
+    .create-review-section input[type="text"],
+    .create-review-section textarea {
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        padding: 12px;
+        font-size: 16px;
+        color: #333; /* Dark text for input fields */
+        transition: border-color 0.3s;
+    }
+    .create-review-section input[type="text"]:focus,
+    .create-review-section textarea:focus {
+        outline: none;
+        border-color: #000000; /* Black border on focus */
+    }
+    .create-review-section textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    /* Rating and Override groups styling */
+    .create-review-section .rating-group,
+    .create-review-section .override-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px; /* Adjust gap as needed */
+        align-items: center;
+    }
+    .create-review-section .rating-option,
+    .create-review-section .override-option {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* Prediction section styling */
+    .create-review-section .prediction-section {
+        background-color: #f0f8f8; /* Very light blue background */
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #a0d0d0; /* Subtle border color */
+    }
+    .create-review-section .prediction-result {
+        font-weight: bold;
+        font-size: 18px;
+        margin: 10px 0;
+        color: #333; /* Default prediction result text color */
+    }
+    .create-review-section .confidence {
+        color: #666;
+        font-style: italic;
+    }
+    .create-review-section .override-section {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    /* Required field asterisk color */
+    .create-review-section .required {
+        color: red;
+    }
+
+    /* Button specific styles for this page if different from base.html */
+    .create-review-section .btn-secondary {
+        background-color: #6c757d; /* Standard Bootstrap secondary */
+        color: #fff;
+    }
+    .create-review-section .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+</style>
+
+<div class="container create-review-section"> {# Added a unique class for page-specific styling #}
+    <h1 class="text-center mb-4">Create Review</h1>
+    
+    <div class="item-info card mb-4"> {# Added card class for consistency with base.html styling #}
+        <div class="card-body">
+            <h3>{{ item['Clothes Title'] }}</h3>
+            <p><strong>Department:</strong> {{ item['Department Name'] }}</p>
+            <p><strong>Description:</strong> {{ item['Clothes Description'] }}</p>
+        </div>
+    </div>
+
+    <form method="POST" id="reviewForm">
+        <div class="form-group mb-3"> {# Added Bootstrap margin class #}
+            <label for="title" class="form-label">Review Title <span class="required">*</span></label>
+            <input type="text" id="title" name="title" required 
+                   placeholder="Enter a brief title for your review" class="form-control"> {# Added Bootstrap form-control #}
+        </div>
+
+        <div class="form-group mb-3"> {# Added Bootstrap margin class #}
+            <label for="review_text" class="form-label">Review Text <span class="required">*</span></label>
+            <textarea id="review_text" name="review_text" required 
+                      placeholder="Share your detailed experience with this item..." class="form-control"></textarea> {# Added Bootstrap form-control #}
+        </div>
+
+        <div class="form-group mb-4"> {# Added Bootstrap margin class #}
+            <label class="form-label">Rating <span class="required">*</span></label>
+            <div class="rating-group">
+                <div class="form-check rating-option"> {# Added Bootstrap form-check #}
+                    <input type="radio" id="rating1" name="rating" value="1" required class="form-check-input">
+                    <label for="rating1" class="form-check-label">1 Star</label>
+                </div>
+                <div class="form-check rating-option">
+                    <input type="radio" id="rating2" name="rating" value="2" required class="form-check-input">
+                    <label for="rating2" class="form-check-label">2 Stars</label>
+                </div>
+                <div class="form-check rating-option">
+                    <input type="radio" id="rating3" name="rating" value="3" required class="form-check-input">
+                    <label for="rating3" class="form-check-label">3 Stars</label>
+                </div>
+                <div class="form-check rating-option">
+                    <input type="radio" id="rating4" name="rating" value="4" required class="form-check-input">
+                    <label for="rating4" class="form-check-label">4 Stars</label>
+                </div>
+                <div class="form-check rating-option">
+                    <input type="radio" id="rating5" name="rating" value="5" required class="form-check-input">
+                    <label for="rating5" class="form-check-label">5 Stars</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="prediction-section card border-info mb-4"> {# Added Bootstrap classes #}
+            <div class="card-header bg-info text-dark"> {# Changed text-white to text-dark for header #}
+                <h4 class="mb-0">AI Recommendation Prediction</h4>
+            </div>
+            <div class="card-body">
+                <p>Based on your review, our AI will predict whether you would recommend this item to others.</p>
+                <div id="predictionResult" class="prediction-result mb-2">
+                    Write your review above to see the AI prediction...
+                </div>
+                <div id="predictionConfidence" class="confidence small text-muted"></div>
+                
+                <div class="override-section mt-3 pt-3 border-top">
+                    <label class="form-label">Would you like to override the AI prediction?</label>
+                    <div class="override-group">
+                        <div class="form-check override-option">
+                            <input type="radio" id="override_yes" name="recommendation" value="1" class="form-check-input">
+                            <label for="override_yes" class="form-check-label">Yes, I recommend this item</label>
+                        </div>
+                        <div class="form-check override-option">
+                            <input type="radio" id="override_no" name="recommendation" value="0" class="form-check-input">
+                            <label for="override_no" class="form-check-label">No, I don't recommend this item</label>
+                        </div>
+                        <div class="form-check override-option">
+                            <input type="radio" id="override_auto" name="recommendation" value="" checked class="form-check-input">
+                            <label for="override_auto" class="form-check-label">Use AI prediction</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions text-center mt-4">
+            <a href="{{ url_for('show_item_details', clothing_item_id=item['Clothing ID']) }}" class="btn btn-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary">Submit Review</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Real-time AI prediction as user types
+    let predictionTimeout;
+    
+    function updatePrediction() {
+        const title = document.getElementById('title').value;
+        const reviewText = document.getElementById('review_text').value;
+        const combinedText = title + ' ' + reviewText;
+        
+        if (combinedText.trim().length > 10) {
+            // Clear previous timeout
+            clearTimeout(predictionTimeout);
+            
+            // Set new timeout to avoid too many requests
+            predictionTimeout = setTimeout(() => {
+                fetch('/api/predict_recommendation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: combinedText
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('predictionResult');
+                    const confidenceDiv = document.getElementById('predictionConfidence');
+                    
+                    resultDiv.innerHTML = `AI Prediction: <strong>${data.recommendation_text}</strong>`;
+                    confidenceDiv.innerHTML = `Confidence: ${(data.confidence * 100).toFixed(1)}%`;
+                    
+                    // Update result color based on prediction
+                    if (data.prediction === 1) {
+                        resultDiv.style.color = '#28a745';
+                    } else {
+                        resultDiv.style.color = '#dc3545';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('predictionResult').innerHTML = 'Unable to get AI prediction';
+                    document.getElementById('predictionResult').style.color = '#6c757d'; // Muted color for error
+                    document.getElementById('predictionConfidence').innerHTML = '';
+                });
+            }, 500); // Wait 500ms after user stops typing
+        } else {
+            // Reset prediction display if text is too short
+            document.getElementById('predictionResult').innerHTML = 'Write your review above to see the AI prediction...';
+            document.getElementById('predictionResult').style.color = ''; // Reset color
+            document.getElementById('predictionConfidence').innerHTML = '';
+        }
+    }
+
+    // Add event listeners for real-time prediction
+    document.getElementById('title').addEventListener('input', updatePrediction);
+    document.getElementById('review_text').addEventListener('input', updatePrediction);
+
+    // Form validation
+    function validateReviewForm(e) {
+        const title = document.getElementById('title').value.trim();
+        const reviewText = document.getElementById('review_text').value.trim();
+        const rating = document.querySelector('input[name="rating"]:checked');
+
+        if (!title) {
+            alert('Please enter a review title.');
+            e.preventDefault();
+            return false;
+        }
+
+        if (!reviewText) {
+            alert('Please enter your review text.');
+            e.preventDefault();
+            return false;
+        }
+
+        if (!rating) {
+            alert('Please select a rating.');
+            e.preventDefault();
+            return false;
+        }
+
+        if (reviewText.length < 10) {
+            alert('Please write a more detailed review (at least 10 characters).');
+            e.preventDefault();
+            return false;
+        }
+        return true;
+    }
+
+    document.getElementById('reviewForm').addEventListener('submit', validateReviewForm);
+</script>
+{% endblock %}
