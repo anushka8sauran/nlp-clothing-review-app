@@ -29,7 +29,9 @@ pip install flask gensim scikit-learn pandas numpy
 python app.py
 4. Open http://localhost:5000 in your browser
 
+Note: The pre-trained model files (fasttext_model.bin, logistic_regression_model.pkl, tfidf_vectorizer.pkl) are not included due to file size limits. The app will automatically run in fallback mode using keyword-based sentiment analysis.
+
 Data Source
 Women's Clothing E-Commerce Reviews dataset
 
-Note: The pre-trained model files (fasttext_model.bin, logistic_regression_model.pkl, tfidf_vectorizer.pkl) are not included due to file size limits. The app will automatically run in fallback mode using keyword-based sentiment analysis.
+
