@@ -1,4 +1,4 @@
-ChicShack — NLP-Powered Clothing Review Web App
+🛍️ ChicShack — NLP-Powered Clothing Review Web App
 
 Overview
 A full-stack Flask web application for an online clothing store featuring AI-powered review recommendation prediction. Users can browse products, search by keyword, and submit reviews — with a trained NLP pipeline predicting whether a review is recommended or not in real-time.
